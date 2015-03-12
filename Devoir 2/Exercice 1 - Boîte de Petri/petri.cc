@@ -71,28 +71,16 @@ public:
 
     void evolue () {
 
-        int populationSize = this -> population.size();
-
-        for (int i = 0; i < populationSize; i++) {
+        int s = this -> population.size();
+        for (int i = 0; i < s; i++) {
             Cellule newCell = this -> population[i].division();
             this -> ajouter (newCell);
         }
 
-        populationSize = this -> population.size();
-
-        for (Cellule c : this -> population) {
+        for (int i = 0; i < this -> population.size(); i++) {
             if (this -> population[i].getEnergie() <= 0) {
-                swap();
+                swap(this -> population[i], this -> population.back());
                 this -> population.pop_back();
-                //this -> population.erase(this -> population.begin() + i);
-            }
-        }
-
-        for (int i = 0; i < populationSize; i++) {
-            if (this -> population[i].getEnergie() <= 0) {
-                //swap(this -> population[i], this -> population.back());
-                //this -> population.pop_back();
-                this -> population.erase(this -> population.begin() + i);
             }
         }
     }
