@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="introoopcpp">
-		<Project filename="Exercice 1 - IMC/Exercice 1 - IMC.cbp" />
-		<Project filename="Exercice 2 - Tirelire/Exercice 2 - Tirelire.cbp" />
+		<Project filename="Devoir 1/Exercice 1 - IMC/Exercice 1 - IMC.cbp" />
+		<Project filename="Devoir 1/Exercice 2 - Tirelire/Exercice 2 - Tirelire.cbp" />
+		<Project filename="Devoir 2/Exercice 1 - Boîte de Petri/Exercice 1 - Boîte de Petri.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

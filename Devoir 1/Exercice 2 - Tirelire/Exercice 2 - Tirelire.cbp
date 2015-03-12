@@ -2,29 +2,26 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Exercice 1 - IMC" />
+		<Option title="Exercice 2 - Tirelire" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="./Exercice 1 - IMC" prefix_auto="1" extension_auto="1" />
+				<Option output="./Exercice 2 - Tirelire" prefix_auto="1" extension_auto="1" />
 				<Option object_output="./" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-std=c++11" />
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="imc.cc" />
+		<Unit filename="tirelire.cc" />
 		<Extensions>
 			<code_completion />
 			<envvars />
