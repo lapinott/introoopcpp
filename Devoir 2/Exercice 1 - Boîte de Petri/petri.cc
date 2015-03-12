@@ -28,6 +28,8 @@ public:
 
     Cellule (string nom = "Pyrobacculum", double taille = 10, int energie = 5, string couleur = "verte") : nom{nom}, taille{taille}, energie{energie}, couleur{couleur} {}
 
+    Cellule (Cellule const& c) : nom{c.nom}, taille{c.taille}, energie{c.energie}, couleur{c.couleur} {}
+
     void affiche () {
         cout << this -> nom << ", taille = " << this -> taille << " microns, énergie = " << this -> energie << ", couleur = " << this -> couleur << endl;
     }
@@ -78,12 +80,21 @@ public:
 
         populationSize = this -> population.size();
 
-        /*for (int i = 0; i < populationSize; i++) {
+        for (Cellule c : this -> population) {
             if (this -> population[i].getEnergie() <= 0) {
-                swap(this -> population[i], this -> population.back());
+                swap();
                 this -> population.pop_back();
+                //this -> population.erase(this -> population.begin() + i);
             }
-        }*/
+        }
+
+        for (int i = 0; i < populationSize; i++) {
+            if (this -> population[i].getEnergie() <= 0) {
+                //swap(this -> population[i], this -> population.back());
+                //this -> population.pop_back();
+                this -> population.erase(this -> population.begin() + i);
+            }
+        }
     }
 };
 
