@@ -4,35 +4,35 @@
 #include <vector>
 using namespace std;
 
-typedef string Day; // type pour dÃ©finir les jous
+typedef string Day; // type pour définir les jous
 
 void print_time(double); // fonction utile pour afficher les heures
 
 class Time
-/* ReprÃ©sente le jour et l'heure d'un Ã©vÃ¨nement.
- * Les heures sont reprÃ©sentÃ©es en double depuis minuit.
- * Par exemple 14:30 est reprÃ©sentÃ© 14.5.
+/* Représente le jour et l'heure d'un évènement.
+ * Les heures sont représentées en double depuis minuit.
+ * Par exemple 14:30 est représenté 14.5.
  * La fonction-outil print_time permet d'afficher de telles heures.
  */
 {
 public:
-  // Constructeur Ã  partir du jour et de l'heure
+  // Constructeur à partir du jour et de l'heure
   Time(Day jour, double heure)
     : day_(jour), hour_(heure) {
   }
 
   // Affichage
   void print() const {
-    cout << day_ << " Ã  ";
+    cout << day_ << " à ";
     print_time(hour_);
   }
 
-  // Pour connaÃ®tre le jour
+  // Pour connaître le jour
   Day day() const {
     return day_;
   }
 
-  // Pour connaÃ®tre l'heure
+  // Pour connaître l'heure
   double hour() const {
     return hour_;
   }
@@ -42,8 +42,8 @@ private:
   double hour_;
 };
 
-/* Fonction outil pour afficher les temps reprÃ©sentÃ©s en double
- * comme indiquÃ© ci-dessus.
+/* Fonction outil pour afficher les temps représentés en double
+ * comme indiqué ci-dessus.
  */
 void print_time(double t)
 {
@@ -52,13 +52,13 @@ void print_time(double t)
        << setfill('0') << setw(2) << int(60.0 * (t - int(t)));
 }
 
-/* Type utilisÃ© pour identifier les cours.
+/* Type utilisé pour identifier les cours.
  * Chaque cours aura en effet un identificateur unique ; par exemple "CS-101".
  */
 typedef string CourseId;
 
 /*******************************************
- * ComplÃ©tez le programme Ã  partir d'ici.
+ * Complétez le programme à partir d'ici.
  *******************************************/
 
 class Activity {
@@ -72,7 +72,7 @@ private:
 public:
 
     Activity (const string& lieu, const Day& jour, const double& heure, const double& duree) : lieu{lieu}, horraire{jour, heure}, duree{duree} {}
-    Activity () : horraire("", 0.) {};
+    //Activity () : horraire("", 0.) {};
     Activity (const Activity& a) = delete;
     Activity operator = (Activity& a) = delete;
 
@@ -92,8 +92,9 @@ public:
         if (
             a.horraire.day() == this -> horraire.day() &&
             (
-                a.horraire.hour() + a.getDuration() > this -> horraire.hour() ||
-                this -> horraire.hour() + this -> getDuration() > a.horraire.hour()
+                a.horraire.hour() < this -> horraire.hour() && a.horraire.hour() + a.getDuration() > this -> horraire.hour() ||
+                this -> horraire.hour() < a.horraire.hour() && this -> horraire.hour() + this -> getDuration() > a.horraire.hour() ||
+                a.horraire.hour() == this -> horraire.hour()
             )
         ) return true;
         else return false;
@@ -102,7 +103,7 @@ public:
     void print () const {
         cout << "le ";
         this -> horraire.print();
-        cout << " en " << this -> lieu << ", durÃ©e ";
+        cout << " en " << this -> lieu << ", durée ";
         print_time(this -> duree);
     }
 };
@@ -167,7 +168,7 @@ public:
         this -> cours.print();
         cout << ", exercices ";
         this -> ex.print();
-        cout << ". crÃ©dits : " << this -> credits;
+        cout << ". crédits : " << this -> credits;
     }
 };
 
@@ -190,19 +191,8 @@ public:
     }
 
     bool conflicts (const CourseId id, vector<CourseId> vid) const {
-        for (const Course* cp : this -> vcp) {
-            if (cp -> getId() == id) {
-                for (const Course* cp2 : this -> vcp) {
-                    for (CourseId cId : vid) {
-                        if (
-                            cp2 -> getId() == cId &&
-                            cp2 -> getId() != id &&
-                            cp -> conflicts(*cp2)
-                        ) return true;
-                    }
-                }
-                break;
-            }
+        for (CourseId cId : vid) {
+            if (findCourse(cId).conflicts(findCourse(id))) return true;
         }
         return false;
     }
@@ -229,47 +219,76 @@ public:
 
     void printCourseSuggestions (vector<CourseId> vid) const {
         int compatible = 0;
-        bool conflit = false;
         for (const Course* cp : this -> vcp) {
-            for (const CourseId cId : vid) {
-                if (this -> conflicts(cId, vid)) conflit = true;
-            }
-            if (!conflit) {
+            if (!this -> conflicts(cp -> getId(), vid)) {
                 cp -> print();
                 cout << endl;
                 ++compatible;
-                break;
             }
-            else conflit = false;
         }
-        if (!compatible) cout << "Aucun cours n'est compatible avec la sÃ©lection de cours." << endl;
+        if (!compatible) cout << "Aucun cours n'est compatible avec la sélection de cours." << endl;
     }
 };
 
 class Schedule {
-    // Hello World
+
+private:
+
+    vector<CourseId> cours;
+    const StudyPlan* plan;
+
+public:
+
+    Schedule (const StudyPlan& plan) : plan{&plan} {}
+
+    bool add_course (CourseId cId) {
+
+        if (!this -> plan -> conflicts(cId, this -> cours)) {
+            this -> cours.push_back(cId);
+            return true;
+        }
+        else return false;
+    }
+
+    double computeDailyWorkload () const {
+        double workload = 0.;
+        for (const CourseId cId : this -> cours) {
+            workload += this -> plan -> workload(cId);
+        }
+        return workload / 5;
+    }
+
+    int computeTotalCredits () const {
+        int credits = 0;
+        for (const CourseId cId : this -> cours) {
+            credits += this -> plan -> credits(cId);
+        }
+        return credits;
+    }
+
+    void print () const {
+        for (const CourseId cId : this -> cours) {
+            this -> plan -> print(cId);
+            cout << endl;
+        }
+        cout << "Total de crédits   : " << this -> computeTotalCredits() << endl;
+        cout << "Charge journalière : ";
+        print_time(this -> computeDailyWorkload());
+        cout << endl;
+        cout << "Suggestions :" << endl;
+        this -> plan -> printCourseSuggestions(this -> cours);
+        cout << endl;
+    }
 };
 
 
-
-
-
-
-      cout << "Aucun cours n'est compatible avec la sÃ©lection de cours." << endl;
-
-
-    cout << "Total de crÃ©dits   : ";
-    cout << "Charge journaliÃ¨re : ";
-    cout << "Suggestions :" << endl;
-
-
 /*******************************************
- * Ne rien modifier aprÃ¨s cette ligne.
+ * Ne rien modifier après cette ligne.
  *******************************************/
 
 int main()
 {
-  // Quelques activitÃ©s
+  // Quelques activités
   Activity physicsLecture  ("Central Hall", "lundi",  9.25, 1.75);
   Activity physicsExercises("Central 101" , "lundi", 14.00, 2.00);
 
@@ -279,12 +298,12 @@ int main()
   Activity financeLecture  ("South Hall",  "vendredi", 14.00, 2.00);
   Activity financeExercises("Central 105", "vendredi", 16.00, 1.00);
 
-  // On affiche quelques informations sur ces activitÃ©s
-  cout << "L'activitÃ© physicsLecture a lieu ";
+  // On affiche quelques informations sur ces activités
+  cout << "L'activité physicsLecture a lieu ";
   physicsLecture.print();
   cout << "." << endl;
 
-  cout << "L'activitÃ© historyLecture a lieu ";
+  cout << "L'activité historyLecture a lieu ";
   historyLecture.print();
   cout << "." << endl;
 
@@ -297,7 +316,7 @@ int main()
   }
   cout << endl;
 
-  // CrÃ©ation d'un plan d'Ã©tude
+  // Création d'un plan d'étude
   StudyPlan studyPlan;
   Course physics("PHY-101", "Physique", physicsLecture, physicsExercises, 4);
   studyPlan.add_course(physics);
@@ -306,21 +325,21 @@ int main()
   Course finance("ECN-214", "Finance" , financeLecture, financeExercises, 3);
   studyPlan.add_course(finance);
 
-  // PremiÃ¨re tentative d'emploi du temps
+  // Première tentative d'emploi du temps
   Schedule schedule1(studyPlan);
   schedule1.add_course(finance.getId());
   cout << "Emploi du temps 1 :" << endl;
   schedule1.print();
 
-  /* On ne sait pas encore trÃ¨s bien quoi faire : on essaye donc
-   * sur une copie de l'emploi du temps prÃ©cÃ©dent.
+  /* On ne sait pas encore très bien quoi faire : on essaye donc
+   * sur une copie de l'emploi du temps précédent.
    */
   Schedule schedule2(schedule1);
   schedule2.add_course(history.getId());
   cout << "Emploi du temps 2 :" << endl;
   schedule2.print();
 
-  // Un troisiÃ¨me essai
+  // Un troisième essai
   Schedule schedule3(studyPlan);
   schedule3.add_course(physics.getId());
   cout << "Emploi du temps 3 :" << endl;

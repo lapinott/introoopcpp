@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1426287525 source:d:\cpp\introoopcpp\devoir 2\exercice 2 - plan d'étude\cours.cc
+	<iostream>
+	<iomanip>
+	<string>
+	<vector>
+
