@@ -71,10 +71,15 @@ public:
 
     void evolue () {
 
-        int s = this -> population.size();
+        /*int s = this -> population.size();
         for (int i = 0; i < s; i++) {
             Cellule newCell = this -> population[i].division();
             this -> ajouter (newCell);
+        }*/
+
+        for (Cellule& c : this -> population) {
+            Cellule newCell = c.division();
+            this -> ajouter(newCell);
         }
 
         for (int i = 0; i < this -> population.size(); i++) {
