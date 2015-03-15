@@ -72,7 +72,7 @@ public:
     }
 
     Construction& operator -= (const Construction& b) {
-        if (b.contenu.size() > this -> contenu.size()) return *this;
+        if (b.contenu.size() < this -> contenu.size()) return *this;
 
         /*int hauteur_max = this -> contenu.size();
         int couche = 0;
@@ -86,7 +86,7 @@ public:
         }*/
 
         for (int i = 0; i < this -> contenu.size(); i++) {
-            for (int j = 0; j < b.contenu[0].size(); j++) {
+            for (int j = 0; j < b.contenu[i].size(); j++) {
                 this -> contenu[i].push_back(b.contenu[i][j]);
             }
         }
@@ -94,11 +94,11 @@ public:
     }
 
     Construction& operator += (const Construction& b) {
-        if (b.contenu.size() > this -> contenu.size()) return *this;
-        if (b.contenu[0].size() > this -> contenu[0].size()) return *this;
+        if (b.contenu.size() < this -> contenu.size()) return *this;
+        if (b.contenu[0].size() < this -> contenu[0].size()) return *this;
         for (int i = 0; i < this -> contenu.size(); i++) {
-            for (int j = 0; j < this -> contenu[0].size(); j++) {
-                for (int k = 0; k < b.contenu[0][0].size(); k++) {
+            for (int j = 0; j < this -> contenu[i].size(); j++) {
+                for (int k = 0; k < b.contenu[i][j].size(); k++) {
                     this -> contenu[i][j].push_back(b.contenu[i][j][k]);
                 }
             }
@@ -111,19 +111,19 @@ ostream& operator << (ostream& os, const Construction& c) {
     return c.afficher(os);
 }
 
-Construction& operator ^ (Construction a, const Construction& b) {
-    a ^= b;
-    return a;
+Construction operator ^ (const Construction& a, const Construction& b) {
+    Construction aa = a;
+    return aa ^= b;
 }
 
-Construction& operator - (Construction a, const Construction& b) {
-    a -= b;
-    return a;
+Construction operator - (const Construction& a, const Construction& b) {
+    Construction aa = a;
+    return aa -= b;
 }
 
-Construction& operator + (Construction a, const Construction& b) {
-    a += b;
-    return a;
+Construction operator + (const Construction& a, const Construction& b) {
+    Construction aa = a;
+    return aa += b;
 }
 
 const Construction operator*(unsigned int n, Construction const& a)
@@ -131,7 +131,7 @@ const Construction operator*(unsigned int n, Construction const& a)
     Construction a0 = a;
     Construction an = a;
     for (int i = 0; i < n - 1; i++) {
-        an = an + a0;
+        an += a0;
     }
     return an;
 }
@@ -141,7 +141,7 @@ const Construction operator/(unsigned int n, Construction const& a)
     Construction a0 = a;
     Construction an = a;
     for (int i = 0; i < n - 1; i++) {
-        an = an ^ a0;
+        an ^= a0;
     }
     return an;
 }
@@ -151,7 +151,7 @@ const Construction operator%(unsigned int n, Construction const& a)
     Construction a0 = a;
     Construction an = a;
     for (int i = 0; i < n - 1; i++) {
-        an = an - a0;
+        an -= a0;
     }
     return an;
 }
@@ -177,6 +177,18 @@ int main() {
     return 0;
 }
 */
+
+class Complex {
+  public:
+    const Complex& operator++() const { // Valide!
+        return *this;
+    }
+};
+
+class Complex2 {
+  public:
+    Complex2 operator-() const {}
+};
 
 /*******************************************
  * Ne rien modifier après cette ligne.
