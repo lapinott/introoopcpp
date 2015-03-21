@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1426893526 source:c:\users\julien\documents\github\introoopcpp\devoir 4\exercice 2 - choc des titans\dragons.cc
+	<iostream>
+	<string>
+	<cmath>
+
