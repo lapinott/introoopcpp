@@ -5,7 +5,7 @@
 using namespace std;
 
 /*******************************************
- * Completez le programme ‡ partir d'ici.
+ * Completez le programme √† partir d'ici.
  *******************************************/
 
 class Mise {
@@ -18,11 +18,13 @@ public:
 
     Mise (int mise) : mise_{mise} {}
 
+    virtual ~Mise() {}
+
     int mise() const {
         return this -> mise_;
     }
 
-    virtual int gain (int tirage) const;
+    virtual int gain (int tirage) const = 0;
 };
 
 class Pleine : public Mise {
@@ -104,7 +106,9 @@ protected:
 
 public:
 
-    virtual void participe (Joueur& j) {
+    virtual ~Roulette() {}
+
+    virtual void participe (const Joueur& j) {
         bool found = false;
         for (const Joueur* jj : this -> vj) {
             if (jj == &j) found = true;
@@ -121,7 +125,6 @@ public:
     }
 
     void rien_ne_va_plus (int valeur) {
-        this -> gain = 0;
         this -> n = valeur;
         this -> gain_maison();
     }
@@ -129,20 +132,22 @@ public:
     virtual int perte_mise (int mise_originale) const = 0;
 
     int gain_maison () {
+        this -> gain = 0;
         for (const Joueur* j : this -> vj) {
             if (j -> gain(this -> n) == 0) this -> gain += this -> perte_mise(j -> mise());
             else this -> gain -= j -> gain(this -> n);
         }
+        return this -> gain;
     }
 
     virtual void afficher (ostream& out) const = 0;
 
     void annoncer () const {
-        cout << "Croupier : le numÈro du tirage est le ";
+        cout << "Croupier : le num√©ro du tirage est le ";
         cout << this -> n << endl;
         for (const Joueur* j : this -> vj) {
-            if (j -> gain(this -> n) == 0) cout << "Le joueur " << j -> nom() << " a misÈ " << j -> mise() << " et perd " << this -> perte_mise(j -> mise()) << endl;
-            else cout << "Le joueur " << j -> nom() << " a misÈ " << j -> mise() << " et gagne " << j -> gain(this -> n) << endl;
+            if (j -> gain(this -> n) == 0) cout << "Le joueur " << j -> nom() << " a mis√© " << j -> mise() << " et perd " << this -> perte_mise(j -> mise()) << endl;
+            else cout << "Le joueur " << j -> nom() << " a mis√© " << j -> mise() << " et gagne " << j -> gain(this -> n) << endl;
         }
         cout << "Gain/perte du casino : " << this -> gain << endl;
     }
@@ -157,12 +162,12 @@ public:
     RouletteFrancaise (RouletteFrancaise& r) = delete;
     RouletteFrancaise operator = (RouletteFrancaise& r) = delete;
 
-    virtual int perte_mise (int mise_originale) const {
+    virtual int perte_mise (int mise_originale) const override {
         return mise_originale;
     }
 
-    virtual void afficher (ostream& out) const {
-        out << "Roulette franÁaise";
+    virtual void afficher (ostream& out) const override {
+        out << "Roulette fran√ßaise";
     }
 };
 
@@ -179,11 +184,11 @@ public:
         if (this -> vj.size() < 10) this -> vj.push_back(&j);
     }
 
-    virtual int perte_mise (int mise_originale) const {
+    virtual int perte_mise (int mise_originale) const override {
         return mise_originale / 2;
     }
 
-    virtual void afficher (ostream& out) const {
+    virtual void afficher (ostream& out) const override {
         out << "Roulette anglaise";
     }
 };
@@ -212,7 +217,7 @@ int main()
 {
   Joueur joueur1("Dupond");
   Joueur joueur2("Dupont");
-  Joueur joueur3("Dupond"); // un AUTRE joueur, du mÍme nom
+  Joueur joueur3("Dupond"); // un AUTRE joueur, du m√™me nom
 
   Pleine p1(100, 1); // miser 100 jetons sur le 1
   Rouges p2(30);     // miser  30 jetons sur les rouges
@@ -229,7 +234,7 @@ int main()
     jeu->participe(joueur1);
     jeu->participe(joueur2);
     jeu->participe(joueur3); // c'est un autre joueur
-    jeu->participe(joueur2); // c'est dÈj‡ un joueur du jeu
+    jeu->participe(joueur2); // c'est d√©j√† un joueur du jeu
     simuler_jeu(*jeu);
   }
 
